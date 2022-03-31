@@ -161,6 +161,7 @@ public class BitBucketPPRJobProbe {
       String displayName = job.getDisplayName();
       String sourceBranchName = bitbucketAction.getSourceBranch();
       String targetBranchName = bitbucketAction.getTargetBranch();
+      String prId = "PR-" + bitbucketAction.getPullRequestId();
 
       logger.log(Level.FINE, "Bitbucket event is : {0}", bitbucketEvent.getAction());
       logger.log(Level.FINE, "Job Name : {0}", displayName);
@@ -172,6 +173,11 @@ public class BitBucketPPRJobProbe {
       } else if (PULL_REQUEST_SERVER_MERGED.equalsIgnoreCase(bitbucketEvent.getAction())) {
         return !displayName.equalsIgnoreCase(targetBranchName);
       } else if (sourceBranchName != null) {
+        logger.log(Level.FINE, "{0} = {1}", new Object[] { sourceBranchName, prId } );
+        if(displayName.equalsIgnoreCase(prId)) {
+          logger.log(Level.FINE, "triggering job : {0}", displayName);
+          return false; //trigger for PR builds not for branch builds
+        }
         return !displayName.equalsIgnoreCase(sourceBranchName);
       } else if (REPOSITORY_CLOUD_PUSH.equalsIgnoreCase(bitbucketEvent.getAction()) && targetBranchName != null) {
         return !displayName.equals(targetBranchName);
