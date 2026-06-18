@@ -174,7 +174,7 @@ public class BitBucketPPRJobProbe {
         return !displayName.equalsIgnoreCase(targetBranchName);
       } else if (sourceBranchName != null) {
         logger.log(Level.FINE, "{0} = {1}", new Object[] { sourceBranchName, prId } );
-        if(displayName.equalsIgnoreCase(prId)) {
+        if(displayName.equalsIgnoreCase(prId) || displayName.contains(sourceBranchName)) {
           logger.log(Level.FINE, "triggering job : {0}", displayName);
           return false; //trigger for PR builds not for branch builds
         }
